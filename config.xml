@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget xmlns="http://www.w3.org/ns/widgets" id="https://addons.opera.com/addons/extensions/details/whac-dial/" version="1.0" viewmodes="minimized">
+  <name>Whac Dial</name>
+  <description xml:lang="en">Whac-A-Mole over SPEED DIAL.</description>
+  <description xml:lang="ja">SPEED DIAL からモグラ叩き。</description>
+  <license xml:lang="en" href="http://www.opensource.org/licenses/mit-license.php">The MIT License</license>
+  <license xml:lang="ja" href="http://sourceforge.jp/projects/opensource/wiki/licenses%2FMIT_license">MIT ライセンス</license>
+  <author href="http://orera.g.hatena.ne.jp/miya2000/">miya2000</author>
+  <icon src="images/icon.64x64.png"/>
+  <access origin="*"/>
+  <feature name="opera:speeddial">
+    <param name="title" value="Whac Dial"/>
+    <param name="url" value="[dummy]"/>
+  </feature>
+</widget>

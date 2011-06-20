@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Whac Dial</title>
+<script src="scripts/jquery-1.6.1.js"></script>
+<script src="scripts/0.js"></script>
+<script src="scripts/storage_ex.js"></script>
+<script src="scripts/background.js"></script>
+<link  href="http://fonts.googleapis.com/css?family=Anton:regular" rel="stylesheet" type="text/css" >
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+}
+body {
+    font-family:'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',sans-serif;
+    background: #333;
+    color: #FFF;
+    background: -o-linear-gradient(top, #BBB, #707075 200px);
+    background: linear-gradient(top, #BBB, #707075 200px);
+}
+h1 {
+    margin: 0px 18px 0;
+    padding: 13px 2em 10px 15px;
+    background-color: #E0E0E0;
+    color: #808088;
+    line-height: 1;
+    text-shadow: 1px 1px #FFF;
+    border: solid #AAA 1px;
+    border-bottom-color: #888;
+    border-right-color: #888;
+    border-radius: 5px;
+    font-family: 'Anton', serif;
+    font-size: 0.8in;
+    font-weight: 400;
+    letter-spacing: 3px;
+    position: relative;
+}
+h1 .version {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 0.4in;
+    -o-transition: color 1s ease;
+    transition: color 1s ease;
+}
+h1 .version:not(:hover) {
+    color: #808088;
+}
+h1 .version:hover {
+    color: #70D0DF;
+}
+p {
+    margin: 0;
+}
+a {
+    color: #FFF;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+    color: #C0FFA0;
+}
+article {
+    padding: 0 18px;
+}
+article {
+    column-count: 2;
+    column-gap: 20px;
+}
+#MAIN_SCREEN_CONTAINER {
+    width: 100%;
+    margin-bottom: 0.6em;
+}
+#MAIN_SCREEN, #MAIN_SCREEN_EXTRA {
+    width: 100%;
+}
+#MAIN_SCREEN_EXTRA {
+    min-height: 280px;
+    display: none;
+}
+object {
+    background-color: #FFF;
+}
+fieldset {
+    width: auto;
+    margin: 0 0 0.8em;
+    padding: 0 0.6em 0.5em;
+    break-inside: avoid;
+    letter-spacing : 1px;
+}
+legend {
+    font-weight: bold;
+    font-size: 120%;
+    padding: 0 0.5em 0 0.4em;
+    text-shadow: 1px 1px #333;
+}
+label:hover {
+    border-radius: 5px;
+    background-color: #5A606A;
+    background: -o-linear-gradient(left, rgb(90, 96, 106), rgb(90, 96, 106) 60%, rgba(90, 96, 106, 0.6));
+}
+label {
+    padding: 1px 0.8em 1px 2px;
+}
+label[for] {
+    padding-right: 5px;
+}
+fieldset > label, fieldset > p {
+    display: block;
+    padding: 6px 0;
+    margin: 0;
+}
+input[type=text], input[type=url] {
+    padding-left: 3px;
+    padding-right: 3px;
+}
+input[type=radio] {
+    margin-right: 0.5em;
+}
+.label_cell {
+    text-align: right;
+    vertical-align: top;
+}
+.label_cell label, .input_cell label {
+    padding: 0;
+}
+.label_cell label:hover, .input_cell label:hover {
+    background: transparent;
+}
+.input_cell input[type=text], .input_cell input[type=url] {
+    width: 100%;
+}
+button {
+    padding: 0.3em 1em;
+}
+header {
+    margin: 0;
+    padding: 15px 0;
+}
+footer {
+    margin: 0;
+    padding-top: 1.4em;
+}
+.line {
+    padding: 10px 25px;
+    background-color: #606060;
+    border-radius: 2px;
+    border: #555555 solid 1px;
+    border-left-width: 0;
+    border-right-width: 0;
+    background: -o-linear-gradient(top, #AAA, #606065 10%, #707075 90%, #AAA);
+    background: linear-gradient(top, #AAA, #606065 10%, #707075 90%, #AAA);
+}
+.line p {
+    font-size: small;
+    padding: 0;
+}
+.extra_dialog {
+    display: none;
+    background-color: #444; 
+    padding: 3px 10px; 
+    border-radius: 8px; opacity: 0.98;
+}
+.extra_screen_container {
+    width:400px; 
+    height: 300px; 
+    border: #888 solid 1px;
+    background-color: #E0E0E0;
+}
+.extra_screen_container iframe {
+    width: 100%;
+    height: 100%;
+}
+</style>
+</head>
+<body>
+<header>
+    <h1>Whac Dial
+    <script>
+        try {
+            document.write('<div class="version">ver ' + widget.version + '</div>');
+        } catch(e) {}
+    </script>
+    </h1>
+</header>
+<article>
+    <section id="MAIN_SCREEN_CONTAINER">
+        <object id="MAIN_SCREEN"></object>
+        <object id="MAIN_SCREEN_EXTRA"></object>
+    </section>
+    <script>
+        buildScreen();
+    </script>
+    <section id="PREFERENCES">
+        <fieldset>
+            <legend>Character</legend>
+            <label><input type="radio" id="Character_Akabei" data-game="default" name="character" value="Akabei" checked="checked" onclick="setGamePreference(this.dataset.game, this.name, this.value)">Akabei</label>
+            <label><input type="radio" id="Character_Pinky"  data-game="default" name="character" value="Pinky" onclick="setGamePreference(this.dataset.game, this.name, this.value)">Pinky</label>
+            <label><input type="radio" id="Character_Aosuke" data-game="default" name="character" value="Aosuke" onclick="setGamePreference(this.dataset.game, this.name, this.value)">Aosuke</label>
+            <label><input type="radio" id="Character_Guzuta" data-game="default" name="character" value="Guzuta" onclick="setGamePreference(this.dataset.game, this.name, this.value)">Guzuta</label>
+            <script>
+                if (current_data.games_info[current_data.game].pref.character) { 
+                    $('#Character_' + escQuery(current_data.games_info[current_data.game].pref.character)).prop('checked', true); 
+                }
+            </script>
+        </fieldset>
+        <fieldset>
+            <legend>Direction of eyes</legend>
+            <label><input type="radio" id="Direction_random" data-game="default" name="direction" value="random" checked="checked" onclick="setGamePreference(this.dataset.game, this.name, this.value)">move at random</label>
+            <label><input type="radio" id="Direction_left" data-game="default" name="direction" value="left" onclick="setGamePreference(this.dataset.game, this.name, this.value)">left</label>
+            <label><input type="radio" id="Direction_right" data-game="default" name="direction" value="right" onclick="setGamePreference(this.dataset.game, this.name, this.value)">right</label>
+            <label><input type="radio" id="Direction_you" data-game="default" name="direction" value="you" onclick="setGamePreference(this.dataset.game, this.name, this.value)">you</label>
+            <script>
+                if (current_data.games_info[current_data.game].pref.direction) { 
+                    $('#Direction_' + escQuery(current_data.games_info[current_data.game].pref.direction)).prop('checked', true); 
+                }
+            </script>
+        </fieldset>
+        <fieldset>
+            <legend>Score</legend>
+            <p>
+            <button onclick="($q('#Score_skip_reset_score_confirm').checked || confirm('Are you sure you want to reset score? \n(This action can not be undone.)')) && resetScore()">reset score</button>
+            <label><input type="checkbox" id="Score_skip_reset_score_confirm" name="skip_reset_score_confirm" onclick="setSkipResetScoreConfirm(this.checked)">skip confirm</label>
+            </p>
+            <script>
+                if (current_data.skip_reset_score_confirm) { 
+                    $('#Score_skip_reset_score_confirm').prop('checked', current_data.skip_reset_score_confirm);
+                }
+            </script>
+        </fieldset>
+        <fieldset>
+        <legend>Speed Dial</legend>
+            <table>
+            <tr>
+                <td class="label_cell"><label for="Dial_url">url:</label></td>
+                <td class="input_cell"><input type="url" id="Dial_url" name="dial_url" value="" size="65" onchange="setUrl(this.value)" placeholder="Show option page"></td>
+            </tr>
+            <tr>
+                <td class="label_cell"><label for="Dial_title">title:</label></td>
+                <td class="input_cell"><input type="text" id="Dial_title" name="dial_title" value="Whac Dial" size="65" onchange="setTitle(this.value)"></td>
+            </tr>
+            </table>
+            <script>
+                if (current_data.url  ) { $('#Dial_url').val(current_data.url);   }
+                if (current_data.title) { $('#Dial_title').val(current_data.title); }
+            </script>
+        </fieldset>
+        <fieldset id="EXTRA_FIELD" class="extra_field">
+            <legend>Extra Option</legend>
+            <p>
+                <button onclick="showExtraDialog()">extra url</button>
+                <label id="Extra_use_extra_game_url_container"><input type="checkbox" id="Extra_use_extra_game_url" name="use_extra_url" onclick="setUseExtraUrl(this.checked)">use extra url</label>
+            </p>
+            <table id="Extra_url_container" >
+            <tr>
+                <td class="label_cell"><label for="Extra_url">url:</label></td>
+                <td class="input_cell"><span id="Extra_url"></span></td>
+            </tr>
+            </table>
+            <script>
+                if (current_data.game == 'extra') { 
+                    $('#Extra_use_extra_game_url').prop('checked', true);
+                }
+                if (current_data.games_info.extra) { 
+                    $('#Extra_url').text(current_data.games_info.extra.src || '');
+                }
+                else {
+                    $('#Extra_use_extra_game_url_container').hide();
+                    $('#Extra_url_container').hide();
+                }
+            </script>
+        </fieldset>
+    </section>
+</article>
+<footer>
+<div class="line">
+<p>
+This software is not related to NAMCO BANDAI Games Co., Ltd. For inquiries, please contact me on Twitter <a href="http://twitter.com/miya2000/">@miya2000</a>.
+</p>
+</div>
+</footer>
+<div class="extra_dialog">
+<fieldset>
+  <legend>Extra url</legend>
+  <p>url:<input type="url" id="Extra_Dialog_url" name="extra_dialog_url" size="60" placeholder="Another webpage, svg, etc."></p>
+  <div class="extra_screen_container">
+    <iframe id="Extra_Dialog_screen" src="empty.html" frameborder="0"></iframe>
+  </div>
+  <div style="text-align: right; padding: 5px 0 0;">
+    <button onclick="hideDialog()">Cancel</button> 
+    <button id="Extra_Dialog_ok" onclick="extraDialog_ok()">OK</button>
+  </div>
+</fieldset>
+</div>
+</body>
+</html>

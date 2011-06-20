@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Whac Dial</title>
+<script src="scripts/0.js"></script>
+<script src="scripts/storage_ex.js"></script>
+<script src="scripts/background.js"></script>
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-family:'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',sans-serif;
+    background: #333;
+    color: #FFF;
+}
+h1 {
+    margin: 0.2em 0 0;
+}
+a {
+    color: #FFF;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+article {
+    padding: 0 1.2em;
+}
+article {
+    column-count: 2;
+    column-gap: 20px;
+}
+#MAIN_SCREEN_CONTAINER {
+    width: 100%;
+    margin-bottom: 0.6em;
+}
+#MAIN_SCREEN, #MAIN_SCREEN_EXTRA {
+    width: 100%;
+}
+#MAIN_SCREEN_EXTRA {
+    min-height: 280px;
+    display: none;
+}
+fieldset {
+    width: auto;
+    margin: 0 0 0.8em;
+    padding: 0 0.6em 0.5em;
+    break-inside: avoid;
+    letter-spacing : 1px;
+}
+legend {
+    font-weight: bold;
+    font-size: 120%;
+    padding: 0 0.5em 0 0.4em;
+}
+label:hover {
+    background-color: #555;
+}
+label {
+    padding: 1px 0.8em 1px 2px;
+}
+label[for] {
+    padding-right: 5px;
+}
+fieldset > label, fieldset > p {
+    display: block;
+    padding: 6px 0;
+    margin: 0;
+}
+input[type=radio] {
+    margin-right: 0.5em;
+}
+.label_cell {
+    text-align: right;
+    vertical-align: top;
+}
+.label_cell label, .input_cell label {
+    padding: 0;
+}
+.label_cell label:hover, .input_cell label:hover {
+    background-color: transparent;
+}
+.input_cell input[type=text], .input_cell input[type=url] {
+    width: 100%;
+}
+button {
+    padding: 0.3em 1em;
+}
+header {
+    margin: 1em 0;
+}
+footer {
+    margin-top: 1.6em;
+}
+.line {
+    padding: 3px 1.2em 2px;
+    background-color: #4A4A4A;
+}
+footer .line {
+    margin: 0;
+}
+.notice {
+    font-size: small;
+    padding: 0 1.5em;
+    margin: 0.5em 0;
+}
+.hidden {
+    display: none;
+}
+.extra_field {
+    column-span: all;
+}
+.extra_toggle {
+    text-align: right;
+}
+.extra_toggle button {
+    background-color: transparent;
+    border: none;
+    font-weight: bold;
+    color: #555;
+}
+fieldset.extra_field {
+    display: none;
+}
+</style>
+</head>
+<body>
+<header class="line">
+    <h1>Whac Dial</h1>
+</header>
+<article>
+    <section id="MAIN_SCREEN_CONTAINER">
+        <object id="MAIN_SCREEN"></object>
+        <object id="MAIN_SCREEN_EXTRA"></object>
+    </section>
+    <script>
+        buildScreen();
+    </script>
+    <section id="PREFERENCES">
+        <form name="options_form" action="javascript:void(0)">
+        <div class="hidden">
+            <input type="submit" onclick="javascript:void(0)">
+        </div>
+        <fieldset>
+            <legend>Character</legend>
+            <label><input type="radio" id="Character_Akabei" name="character" value="Akabei" checked="checked" onclick="setGamePreference('default', this.name, this.value)">Akabei</label>
+            <label><input type="radio" id="Character_Pinky"  name="character" value="Pinky" onclick="setGamePreference('default', this.name, this.value)">Pinky</label>
+            <label><input type="radio" id="Character_Aosuke" name="character" value="Aosuke" onclick="setGamePreference('default', this.name, this.value)">Aosuke</label>
+            <label><input type="radio" id="Character_Guzuta" name="character" value="Guzuta" onclick="setGamePreference('default', this.name, this.value)">Guzuta</label>
+            <script>
+                if (current_data.games_info[current_data.game].pref.character) { var c = $q('#Character_' + escQuery(current_data.games_info[current_data.game].pref.character)); if (c) { c.checked = true; } }
+            </script>
+        </fieldset>
+        <fieldset>
+            <legend>Direction of eyes</legend>
+            <label><input type="radio" id="Direction_random" name="direction" value="random" checked="checked" onclick="setGamePreference('default', this.name, this.value)">move at random</label>
+            <label><input type="radio" id="Direction_left" name="direction" value="left" onclick="setGamePreference('default', this.name, this.value)">left</label>
+            <label><input type="radio" id="Direction_right" name="direction" value="right" onclick="setGamePreference('default', this.name, this.value)">right</label>
+            <label><input type="radio" id="Direction_you" name="direction" value="you" onclick="setGamePreference('default', this.name, this.value)">you</label>
+            <script>
+                if (current_data.games_info[current_data.game].pref.direction) { var c = $q('#Direction_' + escQuery(current_data.games_info[current_data.game].pref.direction)); if (c) { c.checked = true; } }
+            </script>
+        </fieldset>
+        <fieldset>
+        <legend>Speed Dial</legend>
+            <table>
+            <tr>
+                <td class="label_cell"><label for="Dial_url">url:</label></td>
+                <td class="input_cell"><input type="url" id="Dial_url" name="dial_url" value="" size="65" onchange="setUrl(this.value)" placeholder="Show option page"></td>
+            </tr>
+            <tr>
+                <td class="label_cell"><label for="Dial_title">title:</label></td>
+                <td class="input_cell"><input type="text" id="Dial_title" name="dial_title" value="Whac Dial" size="65" onchange="setTitle(this.value)"></td>
+            </tr>
+            </table>
+            <script>
+                if (current_data.url  ) { var c = $q('#Dial_url');   c.value = current_data.url;   }
+                if (current_data.title) { var c = $q('#Dial_title'); c.value = current_data.title; }
+            </script>
+        </fieldset>
+        <fieldset>
+            <legend>Score</legend>
+            <p>
+            <button onclick="($q('#Score_skip_reset_score_confirm').checked || confirm('Are you sure you want to reset score? \n(This action can not be undone.)')) && resetScore()">reset score</button>
+            <label><input type="checkbox" id="Score_skip_reset_score_confirm" name="skip_reset_score_confirm" onclick="setSkipResetScoreConfirm(this.checked)">skip confirm</label>
+            </p>
+            <script>
+                if (current_data.skip_reset_score_confirm) { var c = $q('#Score_skip_reset_score_confirm'); c.checked = current_data.skip_reset_score_confirm; }
+            </script>
+        </fieldset>
+        <div class="extra_toggle"><button onclick="toggle($q('#EXTRA_FIELD'))">&gt;&gt;</button></div>
+        <fieldset id="EXTRA_FIELD" class="extra_field">
+            <legend>Extra Option</legend>
+            <p>
+            <label><input type="checkbox" id="Extra_use_extra_game_url" name="use_extra_url" onclick="setUseExtraUrl(this.checked)">use extra url</label><br>
+            </p>
+            <table>
+            <tr>
+                <td class="label_cell"><label for="Extra_url">url:</label></td>
+                <td class="input_cell"><input type="url" id="Extra_url" name="extra_url" value="" size="120" onchange="setExtraUrl(this.value)" placeholder="Another svg, etc."></td>
+            </tr>
+            </table>
+            <script>
+                if (current_data.game == 'extra') { var c = $q('#Extra_use_extra_game_url'); c.checked = true; }
+                if (current_data.games_info.extra) { var c = $q('#Extra_url'); c.value = current_data.games_info.extra.src || ''; }
+            </script>
+        </fieldset>
+        <script>
+            if (current_data.game == 'extra') { $q('#EXTRA_FIELD').style.display = 'block'; }
+        </script>
+        </form>
+    </section>
+</article>
+<footer>
+<p class="line">
+Get more <a href="https://addons.opera.com/addons/extensions/?tag=speeddial&order=popular&language=any">Speed Dial extensions</a>. 
+<script>
+document.write(' | Search ');
+if (navigator.userLanguage == 'ja') {
+    document.write('<a href="http://www.amazon.co.jp/s/ref=nb_sb_noss?url=search-alias%3Dvideogames&field-keywords=namco">namco games</a>.');
+}
+else {
+    document.write('<a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Dvideogames&field-keywords=namco">namco games</a>.');
+}
+</script>
+</p>
+<p class="notice">
+This software is not related to NAMCO BANDAI Games Co., Ltd. For inquiries, please contact me on Twitter <a href="http://twitter.com/miya2000/">@miya2000</a>.
+</p>
+</footer>
+</body>
+</html>
