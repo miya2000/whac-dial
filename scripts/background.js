@@ -508,14 +508,12 @@ function showDialog(content) {
         if (content) {
             content.style.position = 'absolute';
             content.style.zIndex = '1001';
-            content.style.left = '50%';
-            content.style.top = '40%';
             content.style.display = 'block';
             if (!content.parentElement) {
                 document.body.appendChild(content);
             }
-            content.style.marginLeft = -(content.offsetWidth/2) + 'px';
-            content.style.marginTop  = -(content.offsetHeight/2) + 'px';
+            content.style.top  = (Math.max((window.innerHeight - content.offsetHeight) / 2 - 50, 10) + document.documentElement.scrollTop ) + 'px';
+            content.style.left = (Math.max((window.innerWidth  - content.offsetWidth ) / 2, 5) + document.documentElement.scrollLeft) + 'px';
             content.addEventListener('mousedown', function(e) {
                 var inputs = $X('descendant::*[self::input or self::select or self::button or self::textarea]', content);
                 if (inputs.indexOf(e.target) < 0) {

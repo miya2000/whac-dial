@@ -10,6 +10,6 @@
   <access origin="*"/>
   <feature name="opera:speeddial">
     <param name="title" value="Whac Dial"/>
-    <param name="url" value="[dummy]"/>
+    <param name="url" value="http://my.opera.com/community/"/>
   </feature>
 </widget>
