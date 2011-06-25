@@ -433,7 +433,7 @@
     
     // Properties
     var current_character = 'Akabei';
-    var current_direction = 'right';
+    var current_direction = 'random';
     var current_status = STATUS_DOWN;
     
     // DOM Elements
@@ -814,14 +814,10 @@
     prepareNext(3000);
     
     var params = parseQuery(location.search);
-    if (params.character) {
-        setCharacter(params.character);
-    }
+    setCharacter(params.character || current_character);
+    setDirection(params.direction || current_direction);
     if (params.score) {
         setScore(params.score);
-    }
-    if (params.direction) {
-        setDirection(params.direction);
     }
 
 ]]></script>
