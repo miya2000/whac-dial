@@ -633,7 +633,8 @@ function extraDialog_ok() {
  * @param {Function} callback callback.
  */
 function opened(url, callback) {
-    if (url == current_data.url) {
+    // allow '/' redirection.
+    if (String(url).replace(/\/$/, '') == String(current_data.url).replace(/\/$/, '')) {
         sendCommand({type: 'hit'}, callback);
     }
 }
